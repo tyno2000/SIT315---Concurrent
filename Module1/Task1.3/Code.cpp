@@ -10,9 +10,10 @@ int btn_pin = 2;
 int tempSensor = A0;
 
 int led2 = 12;
-int motionSensor = 3;
+int motionSensor = 7;
 int state = LOW;
 int val = 0;
+int btn_pinP = 3;
 
 
 void setup()
@@ -21,18 +22,18 @@ void setup()
   pinMode(tempSensor, INPUT);
   pinMode(led1, OUTPUT);
   
+  pinMode(btn_pinP, INPUT);
   pinMode(motionSensor, INPUT);
   pinMode(led2, OUTPUT);
   
   Serial.begin(9600);
   
+  attachInterrupt(digitalPinToInterrupt(btn_pinP), Ptoggle, FALLING);
   attachInterrupt(digitalPinToInterrupt(btn_pin), toggle, FALLING);
 }
 
 void loop()
 {
-  
-  
   lowTemp = 20;
   highTemp = 35;
   celsius = map(((analogRead(tempSensor) - 20) * 3.04), 0, 1023, -40, 125);
@@ -62,7 +63,7 @@ void loop()
   val = digitalRead(motionSensor);
   if (val == HIGH) {           
     digitalWrite(led2, HIGH);   
-    delay(50);                
+    delay(1000);                
     
     if (state == LOW) {
       Serial.print("Motion detected! "); 
@@ -71,7 +72,7 @@ void loop()
   } 
   else {
       digitalWrite(led2, LOW); 
-      delay(50);             
+      delay(1000);             
       
       if (state == HIGH){
         Serial.print("Motion stopped! ");
@@ -102,4 +103,10 @@ void toggle()
   Serial.print("Temp: ");
   Serial.print(fahrenheit);
   Serial.println(" F");
+}
+
+void Ptoggle()
+{
+  state == HIGH;
+  Serial.println("PIR interrupt. Motion detected!");
 }
